@@ -1,6 +1,6 @@
 import 'dart:async';
 
-import 'package:chatapp/UIPart/chatsList.dart';
+import 'package:chatapp/UIPart/chatsUI/chatsList.dart';
 import 'package:chatapp/loginSignup/Email/loginEmail.dart';
 
 import 'package:firebase_auth/firebase_auth.dart';

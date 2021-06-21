@@ -1,4 +1,4 @@
-import 'package:chatapp/UIPart/chatsList.dart';
+import 'package:chatapp/UIPart/chatsUI/chatsList.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
@@ -72,8 +72,9 @@ class GoogleAuthentication {
             (await FirebaseAuth.instance.signInWithCredential(credential)).user;
         FirebaseFirestore.instance.collection("users").doc(user.uid).set({
           "userName": user.displayName,
-          "image_url": user.photoURL,
-          'email': user.email,
+          "imageUrl": user.photoURL,
+          "email": user.email,
+          "uid": user.uid,
         });
         try {
           final UserCredential userCredential =

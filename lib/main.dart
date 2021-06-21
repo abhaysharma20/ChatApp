@@ -10,7 +10,6 @@ Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   cameras = await availableCameras();
   await Firebase.initializeApp();
-
   runApp(MaterialApp(home: HomePage()));
 }
 

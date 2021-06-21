@@ -1,5 +1,5 @@
-import 'package:chatapp/UIPart/chatsList.dart';
 //import 'package:chatapp/UIPart/userProfile.dart';
+import 'package:chatapp/UIPart/chatsUI/chatsList.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 

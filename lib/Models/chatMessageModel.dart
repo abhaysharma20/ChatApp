@@ -3,9 +3,9 @@ import 'package:flutter/cupertino.dart';
 class ChatMessage {
   String messageContent;
   String idUser;
-  // Image img;
+  Image img;
   String time;
-  // String messageType;
+  String messageType;
   ChatMessage({
     this.messageContent,
   });

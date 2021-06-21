@@ -1,0 +1,543 @@
+import 'dart:convert';
+import 'dart:io';
+import 'dart:typed_data';
+
+// import 'package:chatapp/UIPart/CamVid/cameraScreen.dart';
+import 'package:chatapp/Models/chatMessageModel.dart';
+import 'package:chatapp/UIPart/CamVid/cameraScreen.dart';
+import 'package:chatapp/UIPart/chatsList.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/material.dart';
+
+// String _picbyte;
+User loggedInUserChat = FirebaseAuth.instance.currentUser;
+// enum AudioState { recording, stop, play }
+
+// const veryDarkBlue = Color(0xff172133);
+// const kindaDarkBlue = Color(0xff202641);
+final firestore = FirebaseFirestore.instance;
+
+class ChatDetailPage extends StatefulWidget {
+  @override
+  _ChatDetailPageState createState() => _ChatDetailPageState();
+}
+
+class _ChatDetailPageState extends State<ChatDetailPage> {
+  // List<ChatMessage> chatList = [];
+  // AudioState audioState;
+
+  // void handleAudioState(AudioState state) {
+  //   setState(() {
+  //     if (audioState == null) {
+  //       // Starts recording
+  //       audioState = AudioState.recording;
+  //       // Finished recording
+  //     } else if (audioState == AudioState.recording) {
+  //       audioState = AudioState.play;
+  //       // Play recorded audio
+  //     } else if (audioState == AudioState.play) {
+  //       audioState = AudioState.stop;
+  //       // Stop recorded audio
+  //     } else if (audioState == AudioState.stop) {
+  //       audioState = AudioState.play;
+  //     }
+  //   });
+  // }
+
+  final TextEditingController _textMessageController = TextEditingController();
+
+  //ChatMessage get chatMessage => null;
+  // void showAlertDialog() {
+  //   // ignore: deprecated_member_use
+  //   Widget cameraButton = FlatButton(
+  //     child: Text("Camera"),
+  //     onPressed: getCameraImage,
+  //   );
+  //   // ignore: deprecated_member_use
+  //   Widget galleryButton = FlatButton(
+  //     child: Text("Gallery"),
+  //     onPressed: getGallaryImage,
+  //   );
+
+  //   AlertDialog alert = AlertDialog(
+  //     title: Text("Hello! "),
+  //     content: Text("Choose Location To Import Image"),
+  //     actions: [
+  //       cameraButton,
+  //       galleryButton,
+  //     ],
+  //   );
+
+  //   showDialog(
+  //     context: context,
+  //     builder: (BuildContext context) {
+  //       return alert;
+  //     },
+  //   );
+  // }
+
+  // Future getCameraImage() async {
+  //   var pictureCamera = (await ImagePicker()
+  //       .getImage(source: ImageSource.camera, imageQuality: 100));
+  //   if (pictureCamera != null) {
+  //     setState(() {
+  //       image = File(pictureCamera.path);
+  //       final bytes = image.readAsBytesSync();
+  //       _picbyte = base64Encode(bytes);
+  //       FirebaseFirestore.instance
+  //           .collection('chatdata')
+  //           .doc('chatRoom')
+  //           .collection('chats')
+  //           .add({
+  //         'messageType': 'Image',
+  //         'chatMessage': _picbyte,
+  //         'sender': loggedInUserChat.email,
+  //         'createdAt': FieldValue.serverTimestamp(),
+  //         'userId': loggedInUserChat.uid,
+  //       });
+  //     });
+  //   } else {}
+  // }
+
+  // //Try Using Show Dialog with 2 options Cam and Gallery
+  // Future getGallaryImage() async {
+  //   var pictureGallery = (await ImagePicker()
+  //       .getImage(source: ImageSource.gallery, imageQuality: 100));
+  //   if (pictureGallery != null) {
+  //     setState(() {
+  //       image = File(pictureGallery.path);
+  //       final bytes = image.readAsBytesSync();
+  //       _picbyte = base64Encode(bytes);
+  //       FirebaseFirestore.instance
+  //           .collection('chatdata')
+  //           .doc('chatRoom')
+  //           .collection('chats')
+  //           .add({
+  //         'messageType': 'Image',
+  //         'chatMessage': _picbyte,
+  //         'sender': loggedInUserChat.email,
+  //         'createdAt': FieldValue.serverTimestamp(),
+  //         'userId': loggedInUserChat.uid,
+  //       });
+  //     });
+  //   } else {}
+  // }
+
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      theme: ThemeData.light(),
+      darkTheme: ThemeData.dark(),
+      themeMode: ThemeMode.system,
+      home: Scaffold(
+          appBar: AppBar(
+            brightness: Brightness.dark,
+            /* bottom: PreferredSize(
+              preferredSize: Size.fromHeight(20.0),
+              child: Padding(
+                padding: EdgeInsets.only(
+                  top: 100,
+                  left: 16,
+                  right: 16,
+                ),
+                child: TextField(
+                  decoration: InputDecoration(
+                    hintText: "Search in the chat",
+                    hintStyle: TextStyle(color: Colors.grey.shade600),
+                    suffixIcon: GestureDetector(
+                      onTap: () {},
+                      child: Icon(
+                        Icons.search,
+                        color: Colors.grey.shade600,
+                        size: 20,
+                      ),
+                    ),
+                    filled: true,
+                    fillColor: Colors.grey.shade100,
+                    contentPadding: EdgeInsets.all(8),
+                    enabledBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(20),
+                        borderSide: BorderSide(color: Colors.grey.shade100)),
+                  ),
+                ),
+              ),
+            ),*/
+
+            automaticallyImplyLeading: false,
+            backgroundColor: Colors.white,
+            flexibleSpace: SafeArea(
+              child: Container(
+                padding: EdgeInsets.only(right: 16),
+                child: Row(
+                  children: <Widget>[
+                    IconButton(
+                      onPressed: () {
+                        Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => ChatPage()));
+                      },
+                      icon: Icon(
+                        Icons.arrow_back,
+                        color: Colors.black,
+                      ),
+                    ),
+
+                    SizedBox(
+                      width: 2,
+                    ),
+
+                    CircleAvatar(
+                      radius: 20,
+                      backgroundImage: NetworkImage(
+                          "https://firebasestorage.googleapis.com/v0/b/chatapp-57f30.appspot.com/o/user_images%2F" +
+                              loggedInUserChat.uid +
+                              ".jpg?alt=media&token=e331836a-8159-46c6-bfaa-857ed7664b32"),
+                    ),
+                    SizedBox(
+                      width: 12,
+                    ),
+
+                    //Input TItle for User
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: <Widget>[
+                        Text('',
+                            style: TextStyle(
+                              fontSize: 16,
+                              fontWeight: FontWeight.w600,
+                            )),
+                        SizedBox(
+                          height: 6,
+                        ),
+                        /*Text(
+                          "Online",
+                          style: TextStyle(
+                              color: Colors.grey.shade600, fontSize: 13),
+                        ),*/
+                      ],
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ),
+          //
+
+          body: SingleChildScrollView(
+            child: Column(
+              children: <Widget>[
+                Container(
+                  child: Column(
+                    children: <Widget>[
+                      Container(
+                        height: MediaQuery.of(context).size.height * 0.85,
+                        child: StreamBuilder(
+                          stream: FirebaseFirestore.instance
+                              .collection('chatdata')
+                              .doc('chatRoom')
+                              .collection('chats')
+                              .orderBy('createdAt', descending: true)
+                              .snapshots(),
+                          builder: (BuildContext context, snapshot) {
+                            if (snapshot.hasData) {
+                              return ListView.builder(
+                                reverse: true,
+                                itemCount: snapshot.data.docs.length,
+
+                                //chats ke upar neeche ka space
+                                padding: EdgeInsets.only(top: 10, bottom: 10),
+                                itemBuilder: (context, index) {
+                                  var messages =
+                                      snapshot.data.docs[index]['chatMessage'];
+                                  var time =
+                                      snapshot.data.docs[index]['createdAt'];
+
+                                  // ChatMessage object = ChatMessage();
+                                  // if (snapshot.data.docs[index]
+                                  //         ['messageType'] ==
+                                  //     'Image') {
+                                  //   Uint8List imageList = base64Decode(snapshot
+                                  //       .data.docs[index]['chatMessage']);
+                                  //   object.img = Image.memory(imageList);
+                                  //   //messages.add(object);
+                                  // }
+
+                                  print(FirebaseAuth.instance.currentUser.uid);
+                                  //
+
+                                  //Bottom container is for showing messages
+                                  return Row(
+                                    mainAxisAlignment: snapshot.data.docs[index]
+                                                ["sender"] ==
+                                            FirebaseAuth
+                                                .instance.currentUser.email
+                                        ? MainAxisAlignment.end
+                                        : MainAxisAlignment.start,
+                                    children: [
+                                      Padding(
+                                        padding: const EdgeInsets.all(8.0),
+                                        child: Container(
+                                          padding: EdgeInsets.only(
+                                              left: 14,
+                                              right: 14,
+                                              top: 10,
+                                              bottom: 10),
+                                          child: Align(
+                                            child: Container(
+                                              decoration: BoxDecoration(
+                                                borderRadius:
+                                                    BorderRadius.circular(30),
+                                              ),
+
+                                              //Design Chats
+                                              child: Material(
+                                                borderRadius: BorderRadius.only(
+                                                    topLeft:
+                                                        Radius.circular(50.0),
+                                                    bottomRight:
+                                                        Radius.circular(50.0),
+                                                    bottomLeft:
+                                                        Radius.circular(50.0)),
+
+                                                // Show Text
+                                                child: Row(
+                                                  children: [
+                                                    Column(
+                                                      crossAxisAlignment:
+                                                          CrossAxisAlignment
+                                                              .start,
+                                                      children: [
+                                                        // (snapshot.data.docs[
+                                                        //             index][
+                                                        //         'messageType'] ==
+                                                        //     'Image')
+                                                        // ? object.img
+                                                        // :
+                                                        Text(
+                                                          messages,
+                                                          style: TextStyle(
+                                                            fontSize: 20,
+                                                            color: (snapshot.data
+                                                                            .docs[index]
+                                                                        [
+                                                                        "sender"] ==
+                                                                    FirebaseAuth
+                                                                        .instance
+                                                                        .currentUser
+                                                                        .email
+                                                                ? Colors.blue
+                                                                : Colors.red),
+                                                          ),
+                                                        ),
+                                                        Text(
+                                                          time,
+                                                          style: TextStyle(
+                                                            fontSize: 12,
+                                                          ),
+                                                        ),
+                                                        // Text(
+                                                        //   "Sent By: $sender",
+                                                        //   style: TextStyle(
+                                                        //     fontSize: 12,
+                                                        //   ),
+                                                        // ),
+                                                      ],
+                                                    ),
+                                                  ],
+                                                ),
+                                              ),
+                                            ),
+                                          ),
+                                        ),
+                                      ),
+                                    ],
+                                  );
+                                },
+                              );
+                            } else
+                              return Center(child: CircularProgressIndicator());
+                          },
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+
+                //
+                //
+
+                Container(
+                  height: MediaQuery.of(context).size.height * 0.08,
+                  width: MediaQuery.of(context).size.width,
+                  child: Align(
+                    alignment: Alignment.bottomLeft,
+                    child: Container(
+                      padding: EdgeInsets.only(left: 10, bottom: 10, top: 10),
+                      height: MediaQuery.of(context).size.height,
+                      width: double.infinity,
+                      color: Colors.white,
+                      child: Row(
+                        children: <Widget>[
+//
+//
+//
+
+//                           AnimatedContainer(
+//                             duration: Duration(milliseconds: 300),
+//                             decoration: BoxDecoration(
+//                               shape: BoxShape.circle,
+//                               color: handleAudioColour(),
+//                             ),
+//                             child: RawMaterialButton(
+//                               fillColor: Colors.white,
+//                               shape: CircleBorder(),
+//                               onPressed: () => handleAudioState(audioState),
+//                               child: getIcon(audioState),
+//                             ),
+//                           ),
+// //
+// //
+// //
+
+//                           if (audioState == AudioState.play ||
+//                               audioState == AudioState.stop)
+//                             Container(
+//                               decoration: BoxDecoration(
+//                                 shape: BoxShape.circle,
+//                                 color: kindaDarkBlue,
+//                               ),
+//                               child: RawMaterialButton(
+//                                 fillColor: Colors.white,
+//                                 shape: CircleBorder(),
+//                                 onPressed: () => setState(() {
+//                                   audioState = null;
+//                                 }),
+//                                 child: Icon(Icons.replay, size: 20),
+//                               ),
+//                             ),
+                          //
+                          //
+                          //
+
+                          SizedBox(
+                            width: 30,
+                          ),
+                          Expanded(
+                            child: TextFormField(
+                              maxLines: 6,
+                              minLines: 1,
+                              onChanged: (value) {
+                                setState(() {});
+                              },
+                              style: TextStyle(),
+                              controller: _textMessageController,
+                              decoration: InputDecoration(
+                                  hintText: ("Write message..."),
+                                  hintStyle: TextStyle(
+                                      color: Colors.black54, fontSize: 17),
+                                  border: InputBorder.none),
+                            ),
+                          ),
+                          SizedBox(
+                            width: 10,
+                          ),
+                          Container(
+                            height: 30,
+                            width: 50,
+                            alignment: Alignment.center,
+                            decoration: BoxDecoration(
+                              shape: BoxShape.circle,
+                            ),
+                            child: RawMaterialButton(
+                              fillColor: Colors.white,
+                              shape: CircleBorder(),
+                              onPressed: () {
+                                Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                        builder: (context) => CameraScreen()));
+                              },
+                              child: Icon(Icons.camera, size: 20),
+                            ),
+                          ),
+                          SizedBox(
+                            width: 10,
+                          ),
+                          Container(
+                            height: 30,
+                            width: 30,
+                            decoration: BoxDecoration(
+                              color: Colors.lightBlue,
+                              borderRadius: BorderRadius.circular(30),
+                            ),
+                            child: GestureDetector(
+                              onTap: () async {
+                                await _sendTextMessage();
+                                _textMessageController.clear();
+                              },
+                              child: Icon(
+                                Icons.send,
+                                color: Colors.white,
+                                size: 20,
+                              ),
+                            ),
+                          ),
+                          SizedBox(
+                            width: 20,
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          )),
+    );
+  }
+
+  Future _sendTextMessage() async {
+    if (_textMessageController.text != null) {
+      FirebaseFirestore.instance
+          .collection('chatdata')
+          .doc('chatRoom')
+          .collection('chats')
+          .add(
+        {
+          'createdAt': DateTime.now().toString(),
+          'userId': loggedInUserChat.uid,
+          'chatMessage': _textMessageController.text,
+          'sender': loggedInUserChat.email,
+          // 'messageType': 'Text'
+        },
+      );
+    }
+    FocusScope.of(context).unfocus();
+  }
+
+  // Icon getIcon(AudioState state) {
+  //   switch (state) {
+  //     case AudioState.play:
+  //       return Icon(Icons.play_arrow, size: 20);
+  //     case AudioState.stop:
+  //       return Icon(Icons.stop, size: 20);
+  //     case AudioState.recording:
+  //       return Icon(Icons.mic, color: Colors.redAccent, size: 20);
+  //     default:
+  //       return Icon(Icons.mic, size: 20);
+  //   }
+  // }
+
+  // Color handleAudioColour() {
+  //   if (audioState == AudioState.recording) {
+  //     return Colors.deepOrangeAccent.shade700.withOpacity(0.5);
+  //   } else if (audioState == AudioState.stop) {
+  //     return Colors.green.shade900;
+  //   } else {
+  //     return kindaDarkBlue;
+  //   }
+  // }
+}

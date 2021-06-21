@@ -8,13 +8,14 @@ import 'package:path_provider/path_provider.dart';
 
 List<CameraDescription> cameras = [];
 
-class CameraScreen extends StatefulWidget {
-  CameraScreen({Key key}) : super(key: key);
+class GroupCameraScreen extends StatefulWidget {
+  // GroupCameraScreen(this.grpname);
   @override
-  _CameraScreenState createState() => _CameraScreenState();
+  _GroupCameraScreenState createState() => _GroupCameraScreenState();
+  // String grpname;
 }
 
-class _CameraScreenState extends State<CameraScreen> {
+class _GroupCameraScreenState extends State<GroupCameraScreen> {
   CameraController _cameraController;
 
   Future<void> cameraValue;

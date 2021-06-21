@@ -2,24 +2,26 @@ import 'dart:convert';
 
 import 'dart:io';
 
-import 'package:chatapp/UIPart/chatsUI/chatDetail.dart';
+import 'package:chatapp/UIPart/Group/groupChatScreen.dart';
+import 'package:chatapp/UIPart/chatsUI/chatsList.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
+String grpname;
 String imageUrl;
 File image;
 User loggedInUserChat = FirebaseAuth.instance.currentUser;
 
-class CameraView extends StatefulWidget {
-  CameraView({Key key, this.path}) : super(key: key);
+class GroupCameraView extends StatefulWidget {
+  GroupCameraView(this.path, this.grpname);
   final String path;
-
   @override
-  _CameraViewState createState() => _CameraViewState();
+  _GroupCameraViewState createState() => _GroupCameraViewState();
+  String grpname;
 }
 
-class _CameraViewState extends State<CameraView> {
+class _GroupCameraViewState extends State<GroupCameraView> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -61,8 +63,8 @@ class _CameraViewState extends State<CameraView> {
                         final bytes = image.readAsBytesSync();
                         dynamic _picbyte = base64Encode(bytes);
                         FirebaseFirestore.instance
-                            .collection('chatdata')
-                            .doc('chatRoom')
+                            .collection('groups')
+                            .doc(widget.grpname)
                             .collection('chats')
                             .add(
                           {
@@ -78,7 +80,7 @@ class _CameraViewState extends State<CameraView> {
                         Navigator.pushReplacement(
                           context,
                           MaterialPageRoute(
-                            builder: (context) => ChatDetailPage(),
+                            builder: (context) => ChatPage(),
                           ),
                         );
                       },
@@ -88,8 +90,9 @@ class _CameraViewState extends State<CameraView> {
                     ),
                   ),
                 ),
-            ),
-            )],
+              ),
+            )
+          ],
         ),
         //Above caption we have to do things add caption
       ),
